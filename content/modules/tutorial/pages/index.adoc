@@ -1,0 +1,87 @@
+= Tutorial
+
+This tutorial introduces you to the essentials of Jmix by walking you through building a sample web application. It covers the entire development process, from modelling data to creating UI and managing access rights.
+
+To complete this tutorial you should be familiar with Java and relational databases.
+
+[[about-app]]
+== About the Sample Application
+
+You will build a simple employee onboarding application. The application will allow HR managers to register new employees and set up their onboarding steps. A new employee will be able to see the required steps and mark them done.
+
+The complete application source code is available in the https://github.com/jmix-framework/jmix-onboarding[jmix-framework/jmix-onboarding^] GitHub repository. We recommend following instructions of this tutorial to create the application step by step, but if you want to just investigate the completed example, clone the repository and open it in Jmix Studio as described in the xref:studio:project.adoc#opening-existing-project[Opening Existing Project] section.
+
+[[data-model]]
+=== Data Model
+
+Creating an application with Jmix often starts from designing the data model. Let's look at the model of the sample onboarding application.
+
+[plantuml]
+....
+@startuml
+
+entity Step {
+    id
+    name
+    duration
+    sortValue
+}
+
+entity Department {
+    id
+    name
+    hrManager: User
+}
+
+entity User {
+    id
+    username
+    firstName
+    lastName
+    department: Department
+    picture
+    joiningDate
+    onboardingStatus
+}
+
+entity UserStep {
+    id
+    user: User
+    step: Step
+    dueDate
+    completedDate
+    sortValue
+}
+
+User -{ UserStep
+UserStep }- Step
+Department -{ User
+Department }- User
+
+@enduml
+....
+
+The central entity in the application is `User`. It contains the user login name and other attributes, as well as their joining date and the onboarding process status. The user belongs to a department, which is designated by the link to the `Department` entity.
+
+The `Deparment` entity defines a company department. It has a name and an HR manager - a user who registers new employees belonging to the department.
+
+The `Step` entity defines an onboarding step like "Safety briefing", "Fill in profile", etc. A step has a name and a duration - a period of time in days after joining the organization when the employee should complete the step. The `sortValue` attribute sets the order of the step in a list of steps.
+
+The `UserStep` entity is an onboarding step of a particular user. It links the `User` and `Step` entities and adds `dueDate` and `completedDate` attributes. The due date is calculated as a user's joining date plus the step duration. The completed date is set to the current date when the user marks the step done.
+
+[[user-roles]]
+=== User Roles
+
+The sample application supports the following user roles:
+
+* _Administrators_ have full control of the application. They see all users, set up onboarding steps, departments and assign HR managers.
++
+image::app-overview/admin-ui-1.png[align="center"]
+
+* _HR Managers_ register new employees withing their departments and start the onboarding process by generating steps for a particular user. They can also track the onboarding process of their department employees.
++
+image::app-overview/hr-manager-ui-1.png[align="center"]
+
+* _Employees_ can see their own onboarding steps and mark the completed steps.
++
+image::app-overview/employee-ui-1.png[align="center"]
