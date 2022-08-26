@@ -79,6 +79,8 @@ If you double-click on the *Add-ons* node, Studio will open a dialog window for 
 image::project-setup/explore-project-4.png[align="center"]
 +
 Liquibase changelogs are XML files describing the database schema changes.
++
+If you double-click on the *Main Data Store* node, you will see parameters of the database connection in a dialog window. These parameters are stored in the `application.properties` file.
 
 * The *Data Model* section displays all project entities. There is a single `User` entity in the new project:
 +
@@ -114,13 +116,13 @@ You can run the new project right after opening it in the IDE and see the initia
 
 image::project-setup/run-app-1.png[align="center"]
 
-Find the dropdown field showing `Onboarding Jmix Application` value in the main toolbar and click the *Debug* button (image:project-setup/start-debugger.svg[]) next to it.
+Find the dropdown field showing `Onboarding Jmix Application` value in the main toolbar and click the *Debug* button (image:common/start-debugger.svg[]) next to it.
 
 [CAUTION]
 ====
-If you are using IntelliJ IDEA Ultimate, you may see one more item in the *Run/Debug Configurations* dropdown list, called `OnboardingApplication` and having a Spring Boot icon (image:project-setup/spring-boot.svg[]) on the left. It is automatically added by the Spring Boot plugin bundled with the IDE. Don't use it.
+If you are using IntelliJ IDEA Ultimate, you may see one more item in the *Run/Debug Configurations* dropdown list, called `OnboardingApplication` and having a Spring Boot icon (image:common/spring-boot.svg[]) on the left. It is automatically added by the Spring Boot plugin bundled with the IDE. Don't use it.
 
-To run a Jmix application, always use a configuration marked with the Gradle icon (image:project-setup/gradle.svg[]).
+To run a Jmix application, always use a configuration marked with the Gradle icon (image:common/gradle.svg[]).
 ====
 
 Studio will show the warning about the data store and unapplied changelog files:
@@ -141,7 +143,7 @@ You will see the execution of Liquibase changelogs by Studio in the *Run* tool w
 
 image::project-setup/run-app-3.png[align="center"]
 
-All existing changelogs have been executed, Studio has checked the database schema for differences with the data model and found nothing. This is expected: we haven't made any changes in the data model yet.
+All existing changelogs have been executed, Studio has checked the database schema for differences with the data model and found nothing. This is expected: you haven't made any changes in the data model yet.
 
 Right after checking the database, Studio builds and runs the application. You will see the console output of the running application in the *Debug* tool window at the bottom:
 
@@ -167,7 +169,7 @@ It's the `Users.browse` screen showing the list of `User`  entities. Now it has 
 [[stop-app]]
 === Stopping Application
 
-To stop the running application, click *Stop* button (image:project-setup/suspend.svg[]) in the main toolbar:
+To stop the running application, click *Stop* button (image:common/suspend.svg[]) in the main toolbar:
 
 image::project-setup/run-app-7.png[align="center"]
 
@@ -176,3 +178,18 @@ You will see the following messages in the *Debug* console:
 image::project-setup/run-app-8.png[align="center"]
 
 Don't worry, it's not actually an error. This is the expected behavior of the IDE.
+
+[[summary]]
+== Summary
+
+In this section, you have set up the development environment and created a new project in the IDE.
+
+You have learned that:
+
+* Jmix Studio is a plugin for IntelliJ IDEA.
+* The tutorial assumes that you have a commercial or trial subscription for Jmix Studio.
+* Studio has a wizard for creating new projects by templates.
+* Studio shows the project structure in the *Jmix* tool window.
+* The new project contains functionality for logging in to the application and managing users.
+* The new application can be started from the IDE right after creating the project.
+* The new project uses a file-based HSQL database which is automatically created and initialized at the first start.

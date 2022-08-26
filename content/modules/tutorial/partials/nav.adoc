@@ -1,2 +1,5 @@
 * xref:tutorial:index.adoc[]
 ** xref:tutorial:project-setup.adoc[]
+** xref:tutorial:steps.adoc[]
+** xref:tutorial:departments.adoc[]
+** xref:tutorial:users.adoc[]
