@@ -1,4 +1,4 @@
-= Project Setup
+= 1. Project Setup
 
 [[dev-env]]
 == Setting Up Development Environment

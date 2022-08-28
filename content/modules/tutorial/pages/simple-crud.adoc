@@ -1,6 +1,4 @@
-= Developing Steps
-
-//Jmix, being a full-stack framework, allows you to develop applications by implementing the whole features one-by-one. A feature can contain everything from the database to UI.
+= 2. Simple CRUD
 
 Let's start from implementing the simplest feature of your Onboarding application: management of onboarding steps. It includes the following:
 
@@ -26,6 +24,8 @@ entity Step {
 
 @enduml
 ....
+
+If your application is running, stop it using the *Stop* button (image:common/suspend.svg[]) in the main toolbar.
 
 In the *Jmix* tool window, click *New* (image:common/add.svg[]) -> *JPA Entity*:
 
@@ -101,7 +101,7 @@ image::steps/create-screens-1.png[align="center", width="457"]
 
 On the first step of the screen creation wizard, select the `Entity browser and editor screen` template:
 
-image::steps/create-screens-2.png[align="center"]
+image::common/screen-wizard-1.png[align="center"]
 
 In Jmix, "browser" means a screen displaying a list of entities, "editor" means a screen for editing a single entity.
 
