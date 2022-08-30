@@ -1,6 +1,8 @@
 = 3. References And Unique Attributes
 
-The next feature of your Onboarding application is the management of departments. It is a bit more complex because a department has the _HR Manager_ reference attribute. Another requirement will be uniqueness of the department name.
+The next feature of your Onboarding application is the management of Departments.
+
+New hire belongs to a Department. Each department has a unique name and a reference to HR Manager.
 
 In this chapter, you will create:
 

@@ -1,6 +1,10 @@
 = 2. Simple CRUD
 
-Let's start from implementing the simplest feature of your Onboarding application: management of onboarding steps. It includes the following:
+Let's start from implementing the simplest feature of your Onboarding application: management of onboarding Steps.
+
+Essentially, an onboarding Step is an action that needs to be done within certain period of time by a new hire. The application stores the name of the action and its maximum duration. A user with admin access rights will manage the list, create new Steps, edit or remove them using dedicated screens.  Once created, a Step can be assigned to  employees (User) by HR manager.
+
+The feature will include the following:
 
 * The `Step` entity.
 * A database table for the entity.
