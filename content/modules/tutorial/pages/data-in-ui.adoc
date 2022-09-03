@@ -1,1 +1,83 @@
-= 5. Working With Data in UI
+= 5. Working with Data in UI
+
+*WORK IN PROGRESS*
+
+In the previous chapters, you implemented management of Steps and Departments. Your application also has the default User management which came from the project template.
+
+Now you need to add some attributes to Users and link them with Steps and Departments.
+
+In this chapter, you will do the following:
+
+* Add `picture`, `joiningDate`, `onboardingStatus` and `department` attributes to the `User` entity and show them in UI.
+* Create the `UserStep` entity which links a User with an onboarding Step.
+* Add a collection of UserSteps to the `User` entity and show it on the User edit screen.
+* Implement the generation and saving of UserSteps in the User edit screen.
+
+[plantuml]
+....
+@startuml
+
+entity Step {
+}
+
+entity Department {
+}
+
+entity User {
+    id
+    username
+    firstName
+    lastName
+    department: Department
+    picture
+    joiningDate
+    onboardingStatus
+}
+
+entity UserStep {
+    id
+    user: User
+    step: Step
+    dueDate
+    completedDate
+    sortValue
+}
+
+User -{ UserStep
+UserStep }- Step
+Department -{ User
+
+@enduml
+....
+
+
+== Adding Attributes to User
+
+Let's add required attributes to the `User` entity:
+
+* `department` is a reference to the `Department` entity.
+* `joiningDate` specifies the day when the onboarding starts.
+* `picture` is a user picture.
+* `onboardingStatus` can have one of three values: `Not started`, `In progress`, `Completed`.
+
+[plantuml]
+....
+@startuml
+
+entity Department {
+}
+
+entity User {
+    ...
+    department: Department
+    joiningDate
+    picture
+    onboardingStatus
+}
+
+Department -{ User
+
+@enduml
+....
+
+== Using Dropdowns for Selecting References

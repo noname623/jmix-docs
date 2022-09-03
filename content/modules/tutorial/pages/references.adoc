@@ -1,4 +1,4 @@
-= 3. References And Unique Attributes
+= 3. References and Unique Attributes
 
 The next feature of your Onboarding application is the management of Departments.
 

@@ -1,0 +1,70 @@
+= 7. Working with Images
+
+*WORK IN PROGRESS*
+
+Your application already has the default User management which came from the project template. In this chapter, you will add a `picture` attribute to the `User` entity and learn how to upload and display images in UI.
+
+== File Reference Attribute
+
+Jmix allows you to store uploaded files outside the database in a so-called _file storage_. In the simple case, it's just a file system directory with a special structure. To link the file to an entity, you create an attribute of the `FileRef` type.
+
+Let's create such an attribute for the User picture.
+
+If your application is running, stop it using the *Stop* button (image:common/suspend.svg[]) in the main toolbar.
+
+Double-click on the `User` entity in *Jmix* tool window and select its last attribute (to add new attributes after it):
+
+image::images/attribute-1.png[]
+
+Click *Add* (image:common/add.svg[]) in the *Attributes* toolbar. In the *New Attribute* dialog, enter `picture` into the *Name* field and select `FileRef` in the *Type* dropdown:
+
+image::images/attribute-2.png[align="center", width="862"]
+
+Accept the suggested value (1024) in the *Length* field. For `FileRef` attribute it defines the column length for storing a reference, not the file itself, so it doesn't limit the file size.
+
+Click *OK*.
+
+Select the `picture` attribute and click the *Add to Screens* (image:common/add-attribute-to-screens.svg[]) button in the *Attributes* toolbar:
+
+image::images/attribute-3.png[align="center"]
+
+
+The appeared dialog window will show all screens that display the `User` entity. Select both `User.edit` and `User.browse` screens:
+
+image::images/attribute-4.png[align="center", width="805"]
+
+Click *OK*.
+
+Studio will create the `picture` column in the `usersTable` of the `User.browse` screen:
+
+image::images/ui-1.png[align="center"]
+
+And the `pictureField` component in the form of the `User.edit` screen:
+
+image::images/ui-2.png[align="center"]
+
+[[run-app]]
+== Running the Application
+
+Click the *Debug* button (image:common/start-debugger.svg[]) in the main toolbar.
+
+Before running the application, Studio will generate a Liquibase changelog:
+
+image::images/run-app-1.png[align="center"]
+
+As you can see, the changelog contains a command for adding the `PICTURE` column to the `USER_` table. The column is of type `VARCHAR(1024)`, because the file reference is actually a string.
+
+Click *OK*.
+
+Studio will execute the changelog, then build and run the application.
+
+Open `++http://localhost:8080++` in your web browser and log in to the application with `admin` / `admin` credentials.
+
+Click on the `Users` item in the `Application` menu. You will see the `Picture` column in the `User.browse` screen:
+
+image::images/run-app-2.png[align="center"]
+
+Click *Edit* for a user. The UI control for uploading a picture is shown at the bottom of the form:
+
+image::images/run-app-3.png[align="center"]
+
