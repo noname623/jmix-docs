@@ -1,7 +1,5 @@
 = 5. Working with Data in UI
 
-*WORK IN PROGRESS*
-
 At this stage of development, the application has the Steps and Departments management and the default User management with the added `Onboarding status` attribute. Now you need to link Users with Steps and Departments.
 
 In this chapter, you will do the following:
@@ -360,6 +358,15 @@ Notice that `user` is selected automatically in the *Mapped by* field. It's the 
 
 Click *OK*.
 
+The attribute source code will have the `@Composition` annotation:
+
+[source,java]
+----
+@Composition
+@OneToMany(mappedBy = "user")
+private List<UserStep> steps;
+----
+
 UserSteps should be displayed in the User edit screen, so select the new `steps` attribute and click the *Add to Screens* (image:common/add-attribute-to-screens.svg[]) button in the *Attributes* toolbar. Select `User.edit` screen and click *OK*.
 
 Studio will modify `user-edit.xml` as shown below:
@@ -515,7 +522,7 @@ You can inject screen components and Spring beans using the *Inject* button in t
 image::data-in-ui/inject-1.gif[]
 ====
 
-Add the logic of creating and saving `UserStep` objects to the `generateButton` handler method:
+Add the logic of creating and saving `UserStep` objects to the `generateButton` click handler method:
 
 [source,java]
 ----
@@ -557,3 +564,226 @@ public void onGenerateButtonClick(Button.ClickEvent event) {
 NOTE: When you create an entity instance through the `DataContext` object, the instance becomes managed by `DataContext` and is saved automatically when the screen is committed, that is when you click *OK* button of the screen.
 
 Press *Ctrl/Cmd+S* and switch to the running application. Reopen the User edit screen and check that when you click the *Generate* button, a few records corresponding to the onboarding Steps are created.
+
+If you commit the screen by clicking *OK*, all created UserSteps will be saved. If you click *Cancel*, nothing will be saved to the database. It happens because in the code above, you don't save the created `UserStep` objects directly to the database. Instead, you merge them into the screen's `DataContext` by creating them through `DataContext.create()`. So the new instances are saved only when the entire `DataContext` is committed.
+
+== Improving UserSteps Table
+
+In the sections below, you will finalize the UI for working with generated UserSteps.
+
+=== Ordering Nested Collection
+
+You may notice that when you open a User with previously generated UserSteps, they are not ordered according to the `sortValue` attribute:
+
+image::data-in-ui/ordering-1.png[align="center"]
+
+The table displays the `steps` collection attribute of the `User` entity, so you can introduce ordering on the data model level.
+
+Open the `User` entity, select `steps` attribute and enter `sortValue` to the *Order by* field:
+
+image::data-in-ui/ordering-2.png[align="center"]
+
+If you switch to the *Text* tab, you can see the `@OrderBy` annotation on the `steps` attribute:
+
+[source,java]
+----
+@OrderBy("sortValue")
+@Composition
+@OneToMany(mappedBy = "user")
+private List<UserStep> steps;
+----
+
+Now when you load the `User` entity, its `steps` collection will be sorted by the `UserStep.sortValue` attribute.
+
+If your application is running, restart it.
+
+Open the User edit screen. Now the ordering of UserSteps is correct:
+
+image::data-in-ui/ordering-3.png[align="center"]
+
+=== Rearranging Table Columns
+
+Currently, the table of UserSteps is not very informative. Let's remove the `Version` and `Sort value` columns and add a column showing the Step name.
+
+Removing a column is straightforward: just select it in *Component Hierarchy* and press *Delete*, or remove the element directly from XML.
+
+To add a column, select the `columns` element in *Component Hierarchy* and click *Add* -> *Column* in the *Component Inspector*. The *Add Column* dialog appears:
+
+image::data-in-ui/columns-2.png[align="center"]
+
+As you can see, it doesn't allow you to add a Step name. This is because the `step` attribute is a reference, and you didn't define a proper fetch plan to load it.
+
+Select the `userDc` data container in *Component Hierarchy* and click the *Edit* button (image:common/edit.svg[]) either in the `fetchPlan` property in *Component Inspector* or in the gutter of the XML editor:
+
+image::data-in-ui/columns-3.png[align="center"]
+
+In the *Edit Fetch Plan* window, select `steps` -> `step` attribute and click *OK*:
+
+image::data-in-ui/columns-4.png[align="center"]
+
+The nested attribute will be added to fetch plan XML:
+
+[source,xml]
+----
+<instance id="userDc"
+          class="com.company.onboarding.entity.User">
+    <fetchPlan extends="_base">
+        <property fetchPlan="_base" name="department"/>
+        <property fetchPlan="_base" name="steps">
+            <property name="step" fetchPlan="_base"/>
+        </property>
+    </fetchPlan>
+    <loader/>
+    <collection id="stepsDc" property="steps"/>
+</instance>
+----
+
+Now the collection of UserSteps will be eagerly loaded from the database together with the `User` instance.
+
+Select the `columns` element in *Component Hierarchy* and click *Add* -> *Column* in the *Component Inspector*. The *Add Column* dialog now contains the related `Step` entity and its attributes:
+
+image::data-in-ui/columns-5.png[align="center", width="386"]
+
+Select `step` -> `name` and click *OK*. The new column will be added to the end of the columns list:
+
+[source,xml]
+----
+<table id="stepsTable" dataContainer="stepsDc" ...>
+    <columns>
+        <column id="dueDate"/>
+        <column id="completedDate"/>
+        <column id="step.name"/>
+    </columns>
+----
+
+Instead of `step.name` you could use just `step`. In this case, the column would display the xref:references.adoc#instance-name[instance name] of the entity. For `Step`, the instance name is obtained from the `name` attribute, so the result would be the same.
+
+TIP: You could also add the `step` column directly in XML without modifying the fetch plan, and the UI would still work due to lazy loading of references. But then `Step` instances would be loaded by separate requests for each `UserStep` in the collection (N+1 query problem).
+
+Move the `step.name` column to the beginning by dragging and dropping the element in *Component Hierarchy* or editing the XML directly:
+
+[source,xml]
+----
+<table id="stepsTable" dataContainer="stepsDc" ...>
+    <columns>
+        <column id="step.name"/>
+        <column id="dueDate"/>
+        <column id="completedDate"/>
+    </columns>
+----
+
+Press *Ctrl/Cmd+S* and switch to the running application. Reopen the User edit screen and make sure the *Steps* table now shows the Step name:
+
+image::data-in-ui/columns-6.png[align="center"]
+
+=== Adding Generated Column
+
+In this section, you will implement an ability to mark a UserStep completed by clicking a checkbox in the table row.
+
+A UI table component can have so called _generated columns_ not linked with particular entity attributes. In a generated column's cell, you can show any visual component or a container with multiple components inside.
+
+Let's add a generated column which displays a checkbox.
+
+Select the `columns` element in *Component Hierarchy* and click *Add* -> *Column* in the *Component Inspector*. The *Add Column* dialog appears:
+
+image::data-in-ui/generated-column-1.png[align="center"]
+
+Select *New Custom Column* and click *OK*.
+
+In the *Additional Settings for Custom Coulmn* dialog, enter `completed` into *Custom column id* field and select the *Create generator* checkbox:
+
+image::data-in-ui/generated-column-2.png[align="center", width="536"]
+
+Click *OK*.
+
+Studio will add the `completed` column to the table XML:
+
+image::data-in-ui/generated-column-3.png[align="center", width="537"]
+
+and a handler method to the `UserEdit` controller:
+
+image::data-in-ui/generated-column-4.png[align="center", width="709"]
+
+Notice the line markers on the left: they allow you to switch between the column definition in XML and its handler method in the controller.
+
+Inject `UiComponents` object into controller class:
+
+[source,java]
+----
+@Autowired
+private UiComponents uiComponents;
+----
+
+Implement the handler method:
+
+[source,java]
+----
+@Install(to = "stepsTable.completed", subject = "columnGenerator") // <1>
+private Component stepsTableCompletedColumnGenerator(UserStep userStep) { // <2>
+    CheckBox checkBox = uiComponents.create(CheckBox.class); // <3>
+    checkBox.setValue(userStep.getCompletedDate() != null);
+    checkBox.addValueChangeListener(e -> { // <4>
+        if (userStep.getCompletedDate() == null) {
+            userStep.setCompletedDate(LocalDate.now());
+        } else {
+            userStep.setCompletedDate(null);
+        }
+    });
+    return checkBox; // <5>
+}
+----
+<1> The `@Install` annotation indicates that the method is a _delegate_: a UI component invokes it on some stage of its lifecycle.
+<2> This specific delegate (column generator) receives an entity instance which is shown in the table row as an argument.
+<3> The `CheckBox` component instance is created using the `UiComponents` factory.
+<4> When you click the checkbox, its value changes and the checkbox calls its `ValueChangeEvent` listener. The listener sets the `completedDate` attribute of the `UserStep` entity.
+<5> The column generator delegate returns the visual component to be shown in the column cells.
+
+Move the `completed` column on top, set its `caption` attribute to empty string and `width` to `50px`:
+
+[source,xml]
+----
+<table id="stepsTable" dataContainer="stepsDc" ...>
+    <columns>
+        <column id="completed" caption="" width="50px"/>
+        <column id="step.name"/>
+        <column id="dueDate"/>
+        <column id="completedDate"/>
+    </columns>
+----
+
+Press *Ctrl/Cmd+S* and switch to the running application. Reopen the User edit screen and click checkboxes for some rows. The *Completed date* column will change accordingly:
+
+image::data-in-ui/generated-column-5.png[align="center"]
+
+The changes in `UserStep` instances will be saved to the database when you click *OK* in the screen. It's the responsibility of the screen's `DataContext`: it tracks changes in all entities and saves to the database changed instances.
+
+== Summary
+
+In this section, you have implemented two features:
+
+. Ability to specify a department for a user.
+. Generation and management of onboarding steps for a user.
+
+You have learned that:
+
+* Reference attributes should be added to a screen's xref:data-access:fetching.adoc#fetch-plan[fetch plan] to avoid the N+1 query problem.
+
+* The xref:ui:vcl/components/entity-combo-box.adoc[] component can be used to select a related entity from a dropdown. This component requires a xref:ui:data/collection-container.adoc[] with options to be set in the xref:ui:vcl/xml.adoc#options-container[optionsContainer] property.
+
+* The relationship between `User` and `UserStep` entities is an example of _composition_, when instances of the related entity (`UserStep`) can exist only as a part of its owner (`User`). Such a reference is marked with xref:data-model:entities.adoc#composition[@Composition] annotation.
+
+* A collection of related entities can be ordered using the `@OrderBy` annotation on the reference attribute.
+
+* The `ClickEvent` handler of the xref:ui:vcl/components/button.adoc[] component is used to handle button clicks. It can be generated on the *Handlers* tab of the *Component Inspector* tool window.
+
+* The `getEditedEntity()` method of the xref:ui:screens/methods.adoc#methods-of-standard-editor[edit screen controller] returns the entity instance being edited.
+
+* The xref:ui:notifications.adoc[Notifications] interface is used to show popup notifications.
+
+* The xref:data-access:data-manager.adoc[DataManager] interface can be used to load data from the database.
+
+* A nested collection of related entities is loaded into a xref:ui:data/property-containers.adoc[CollectionPropertyContainer]. Its `getItems()` and `getMutableItems()` methods can be used to iterate over and to add/remove items to the collection.
+
+* xref:ui:data/data-context.adoc[DataContext] tracks changes in entities and saves changed instances to the database when user clicks *OK* in the screen.
+
+* The UI table can have xref:ui:vcl/components/table.adoc#table-column-generation[generated columns] which display arbitrary visual components.
