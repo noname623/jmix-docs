@@ -45,6 +45,7 @@ Department -{ User
 @enduml
 ....
 
+[[ref-attr]]
 == Adding Reference Attribute
 
 You've already done a similar task when created the xref:references.adoc#create-reference-attr[HR Manager attribute] of the `Department` entity as a reference to `User`. Now you need to create a link in the opposite direction: a User should have a reference to Department.
@@ -132,6 +133,7 @@ Click on the *Users* item in the *Application* menu. You will see the *Departmen
 
 image::data-in-ui/add-attr-3.png[align="center", width="507"]
 
+[[using-dropdown]]
 == Using Dropdown for Selecting Reference
 
 By default, Studio generates the `entityPicker` component for selecting references. You can see it in the `User.edit` screen. Open `user-edit.xml` and switch to XML editor using the button in the top panel:
@@ -168,6 +170,7 @@ You will see that the *Department* field is now a dropdown, but its list is empt
 
 image::data-in-ui/dropdown-2.png[align="center", width="506"]
 
+[[options-container]]
 === Creating Options Data Container
 
 Let's provide a list of options to the `entityComboBox` component displaying the reference to Department. The list should contain all Departments ordered by name.
@@ -237,6 +240,7 @@ image::data-in-ui/dropdown-3.png[align="center", width="496"]
 
 TIP: The `entityComboBox` component allows you to filter options by entering text into the field. But keep in mind that filtering is performed in the server memory, all options are loaded from the database at once.
 
+[[user-step-entity]]
 == Creating UserStep Entity
 
 In this section, you will create the `UserStep` entity which represents onboarding Steps for a particular User:
@@ -313,6 +317,7 @@ The final state of the entity designer should look as below:
 
 image::data-in-ui/create-user-step-1.png[align="center"]
 
+[[composition-attr]]
 == Adding Composition Attribute
 
 Consider the relationship between `User` and `UserStep` entities. `UserStep` instances exist only in the context of a particular `User` instance (owned by it). A `UserStep` instance cannot change its owner - it just doesn't make any sense. Also, there are no links to `UserStep` from other data model objects, they are completely encapsulated in a User context.
@@ -429,10 +434,12 @@ image::data-in-ui/composition-2.png[align="center"]
 
 If you click *Create* in the *Steps* table, you will get an exception saying that `Screen 'UserStep.edit' is not defined`. This is true - you didn't create an edit screen for the `UserStep` entity. But you don't actually need it, because `UserStep` instances should be generated from the predefined `Step` instances for the particular `User`.
 
+[[generate-user-steps]]
 == Generating UserSteps for User
 
 In this section, you will implement the generation and showing of `UserStep` instances for the edited `User`.
 
+[[joining-date-attr]]
 === Adding JoiningDate Attribute
 
 First, let's add the `joiningDate` attribute to the `User` entity:
@@ -467,6 +474,7 @@ Studio will generate a Liquibase changelog for adding the `JOINING_DATE` column 
 
 Studio will execute the changelog and start the application. Open `++http://localhost:8080++` in your web browser, log in to the application and check that the new attribute is shown in the User browse edit screens.
 
+[[custom-button]]
 === Adding Custom Button
 
 Now you need to remove the standard actions and buttons for managing UserSteps and add a button for starting a custom logic of creating entities.
@@ -495,6 +503,7 @@ Press *Ctrl/Cmd+S* and switch to the running application. Reopen the User edit s
 
 image:data-in-ui/button-2.png[align="center"]
 
+[[create-user-steps]]
 === Creating and Saving UserStep Instances
 
 Let's implement the logic of generating `UserStep` instances.
@@ -567,10 +576,12 @@ Press *Ctrl/Cmd+S* and switch to the running application. Reopen the User edit s
 
 If you commit the screen by clicking *OK*, all created UserSteps will be saved. If you click *Cancel*, nothing will be saved to the database. It happens because in the code above, you don't save the created `UserStep` objects directly to the database. Instead, you merge them into the screen's `DataContext` by creating them through `DataContext.create()`. So the new instances are saved only when the entire `DataContext` is committed.
 
+[[improve-table]]
 == Improving UserSteps Table
 
 In the sections below, you will finalize the UI for working with generated UserSteps.
 
+[[order-nested-collection]]
 === Ordering Nested Collection
 
 You may notice that when you open a User with previously generated UserSteps, they are not ordered according to the `sortValue` attribute:
@@ -601,6 +612,7 @@ Open the User edit screen. Now the ordering of UserSteps is correct:
 
 image::data-in-ui/ordering-3.png[align="center"]
 
+[[rearrange-table-columns]]
 === Rearranging Table Columns
 
 Currently, the table of UserSteps is not very informative. Let's remove the `Version` and `Sort value` columns and add a column showing the Step name.
@@ -676,6 +688,7 @@ Press *Ctrl/Cmd+S* and switch to the running application. Reopen the User edit s
 
 image::data-in-ui/columns-6.png[align="center"]
 
+[[generated-column]]
 === Adding Generated Column
 
 In this section, you will implement an ability to mark a UserStep completed by clicking a checkbox in the table row.
@@ -759,6 +772,7 @@ image::data-in-ui/generated-column-5.png[align="center"]
 
 The changes in `UserStep` instances will be saved to the database when you click *OK* in the screen. It's the responsibility of the screen's `DataContext`: it tracks changes in all entities and saves to the database changed instances.
 
+[[summary]]
 == Summary
 
 In this section, you have implemented two features:
