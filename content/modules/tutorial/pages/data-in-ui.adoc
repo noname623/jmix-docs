@@ -714,6 +714,8 @@ Inject `UiComponents` object into controller class:
 private UiComponents uiComponents;
 ----
 
+TIP: You can use *Inject* button in the top actions panel of the editor to inject dependencies into screen controllers and Spring beans.
+
 Implement the handler method:
 
 [source,java]
@@ -732,7 +734,7 @@ private Component stepsTableCompletedColumnGenerator(UserStep userStep) { // <2>
     return checkBox; // <5>
 }
 ----
-<1> The `@Install` annotation indicates that the method is a _delegate_: a UI component invokes it on some stage of its lifecycle.
+<1> The `@Install` annotation indicates that the method is a _delegate_: a UI component (table in this case) invokes it on some stage of its lifecycle.
 <2> This specific delegate (column generator) receives an entity instance which is shown in the table row as an argument.
 <3> The `CheckBox` component instance is created using the `UiComponents` factory.
 <4> When you click the checkbox, its value changes and the checkbox calls its `ValueChangeEvent` listener. The listener sets the `completedDate` attribute of the `UserStep` entity.
