@@ -772,6 +772,54 @@ image::data-in-ui/generated-column-5.png[align="center"]
 
 The changes in `UserStep` instances will be saved to the database when you click *OK* in the screen. It's the responsibility of the screen's `DataContext`: it tracks changes in all entities and saves to the database changed instances.
 
+=== Reacting to Changes
+
+When you generate steps for the user, mark a UserStep completed or remove a step, the `Onboarding status` field should change accordingly.
+
+Let's implement reaction to the UserSteps collection changes.
+
+Open `UserEdit` controller and click *Generate Handler* in the top actions panel. Collapse all items, then select `ItemPropertyChangeEvent` and `CollectionChangeEvent` items in `Data containers handlers` -> `stepsDc`:
+
+image::data-in-ui/container-listener-1.png[align="center"]
+
+Click *OK*.
+
+Studio will generate two method stubs: `onStepsDcItemPropertyChange()` and `onStepsDcCollectionChange()`. Implement them as below:
+
+[source,java]
+----
+@Subscribe(id = "stepsDc", target = Target.DATA_CONTAINER)
+public void onStepsDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<UserStep> event) {
+    updateOnboardingStatus(); // <1>
+}
+
+@Subscribe(id = "stepsDc", target = Target.DATA_CONTAINER)
+public void onStepsDcCollectionChange(CollectionContainer.CollectionChangeEvent<UserStep> event) {
+    updateOnboardingStatus(); // <2>
+}
+
+private void updateOnboardingStatus() {
+    User user = getEditedEntity(); // <3>
+
+    long completedCount = user.getSteps().stream()
+            .filter(us -> us.getCompletedDate() != null)
+            .count();
+    if (completedCount == 0) {
+        user.setOnboardingStatus(OnboardingStatus.NOT_STARTED); // <4>
+    } else if (completedCount == user.getSteps().size()) {
+        user.setOnboardingStatus(OnboardingStatus.COMPLETED);
+    } else {
+        user.setOnboardingStatus(OnboardingStatus.IN_PROGRESS);
+    }
+}
+----
+<1> `ItemPropertyChangeEvent` handler is invoked when an attribute of the entity changes.
+<2> `CollectionChangeEvent` handler is invoked when items are added to or removed from the container.
+<3> Get the currently edited `User` instance.
+<4> Update `onboardingStatus` attribute. Thanks to the data binding, the changed value will be immediately shown by the UI attribute.
+
+Press *Ctrl/Cmd+S* and switch to the running application. Reopen the User edit screen and make some changes in the UserStep table. Watch the `Onboarding status` field value.
+
 [[summary]]
 == Summary
 
@@ -803,3 +851,5 @@ You have learned that:
 * xref:ui:data/data-context.adoc[DataContext] tracks changes in entities and saves changed instances to the database when user clicks *OK* in the screen.
 
 * The UI table can have xref:ui:vcl/components/table.adoc#table-column-generation[generated columns] which display arbitrary visual components.
+
+* xref:ui:data/instance-container.adoc#events[ItemPropertyChangeEvent] and xref:ui:data/collection-container.adoc#events[CollectionChangeEvent] can be used to react to changes in entities located in data containers.

@@ -545,11 +545,8 @@ image::ui-from-scratch/theme-4.png[align="center"]
 
 [TIP]
 ====
-When you work on CSS for a custom theme, you can quickly test changes in the running application.
+When you work on CSS for a custom theme, you can quickly test changes in the running application. Open terminal and execute:
 
-* Either open *Gradle* tool window and double-click *Tasks* -> *web* -> *compileThemes* item.
-* Or open terminal and execute:
-+
 [source,shell]
 ----
 ./gradlew compileThemes
