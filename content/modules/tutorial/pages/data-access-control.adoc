@@ -1,6 +1,6 @@
 = 9. Data Access Control
 
-So far you entered the application as admin and had full control over data and UI. In this chapter, you will set up restricted access to the application for HR Managers and Employees.
+So far you entered the application as admin and had full control over data and UI. In this final chapter, you will set up restricted access to the application for HR Managers and Employees.
 
 [[employees-resource-role]]
 == Resource Role for Employees
