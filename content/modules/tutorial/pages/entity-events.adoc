@@ -4,6 +4,7 @@ At this stage, you have completed the data model and UI of the application. But 
 
 In this chapter, you will implement the missing part: the `Onboarding status` attribute of the `User` entity will be updated whenever the state of the corresponding `UserStep` instances changes.
 
+[[create-entity-changed-event-listener]]
 == Creating EntityChangedEvent Listener
 
 If your application is running, stop it using the *Stop* button (image:common/suspend.svg[]) in the main toolbar.

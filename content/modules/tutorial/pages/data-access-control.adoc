@@ -2,8 +2,10 @@
 
 So far you entered the application as admin and had full control over data and UI. In this chapter, you will set up restricted access to the application for HR Managers and Employees.
 
+[[employees-resource-role]]
 == Resource Role for Employees
 
+[[create-resource-role]]
 === Creating Resource Role
 
 In the *Jmix* tool window, click *New* (image:common/add.svg[]) -> *Role*:
@@ -77,6 +79,7 @@ Press *Ctrl/Cmd+S* and switch to the running application. Open *Administration* 
 
 image::security/employee-role-5.png[align="center"]
 
+[[assign-role]]
 === Assigning Role
 
 Now let's assign the role to a user. Open the *Users* browse screen and create a new user `bob`. Select the user and click *Role assignments* button:
@@ -105,6 +108,7 @@ Log in as `bob`. You will see only `My onboarding` screen in the menu:
 
 image::security/assign-role-5.png[align="center"]
 
+[[managers-resource-role]]
 == Resource Role for HR Managers
 
 In the *Jmix* tool window, click *New* (image:common/add.svg[]) -> *Role*.
@@ -180,12 +184,13 @@ Press *Ctrl/Cmd+S* and switch to the running application. Log in as `admin`. Ope
 
 Create a new user, say `alice`.
 
-Assign the `HR Mnager` and `UI: minimal access` roles to `alice` as you did in the <<_assigning_role,previous>> section.
+Assign the `HR Mnager` and `UI: minimal access` roles to `alice` as you did in the <<assign-role,previous>> section.
 
 Log in as `alice`. You will see the `Users` screen and will be able to manage users and their onboarding steps:
 
 image::security/manager-role-4.png[align="center"]
 
+[[managers-row-level-role]]
 == Row-level Role for HR Managers
 
 Currently, HR managers can create users, assign any department to a user, and see users of all departments.
@@ -268,6 +273,7 @@ And `alice` can assign only this department to a user:
 
 image::security/rl-role-7.png[align="center", width="554"]
 
+[[summary]]
 == Summary
 
 In this section, you have created HR Managers and Employees roles to restrict access to the application for different groups of users.
