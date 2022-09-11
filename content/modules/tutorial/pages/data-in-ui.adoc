@@ -801,9 +801,10 @@ public void onStepsDcCollectionChange(CollectionContainer.CollectionChangeEvent<
 private void updateOnboardingStatus() {
     User user = getEditedEntity(); // <3>
 
-    long completedCount = user.getSteps().stream()
-            .filter(us -> us.getCompletedDate() != null)
-            .count();
+    long completedCount = user.getSteps() == null ? 0 :
+            user.getSteps().stream()
+                    .filter(us -> us.getCompletedDate() != null)
+                    .count();
     if (completedCount == 0) {
         user.setOnboardingStatus(OnboardingStatus.NOT_STARTED); // <4>
     } else if (completedCount == user.getSteps().size()) {
