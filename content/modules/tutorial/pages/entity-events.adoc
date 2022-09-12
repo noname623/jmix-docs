@@ -107,4 +107,4 @@ NOTE: You can rely on `EntityChangedEvent` listeners while you work with data th
 [[summary]]
 == Summary
 
-* xref:data-access:entity-events.adoc#entity-changed-event[EntityChangedEvent] listeners can be used to maintain data consistency and execute business logic in the current transaction or after its completion.
+xref:data-access:entity-events.adoc#entity-changed-event[EntityChangedEvent] listeners can be used to maintain data consistency and execute business logic in the current xref:data-access:transactions.adoc[transaction] or after its completion.
