@@ -87,7 +87,7 @@ curl -X GET http://localhost:8080/rest/entities/User \
     "_instanceName": "[admin]",
     "id": "60885987-1b61-4247-94c7-dff348347f93",
     "version": 1,
-    "active": true,
+    "active": true
     "username": "admin"
   }
 ]
